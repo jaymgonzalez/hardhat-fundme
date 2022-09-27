@@ -20,15 +20,18 @@ contract FundMe {
 
   address public immutable i_owner;
 
-  constructor() {
+  AggregatorV3Interface public priceFeed;
+
+  constructor(address priceFeedAddress) {
     i_owner = msg.sender;
+    priceFeed = AggregatorV3Interface(priceFeedAddress);
   }
 
   // 21508
   // 23600
   function fund() public payable {
     require(
-      msg.value.getConversionRate() >= MINIMUM_USD,
+      msg.value.getConversionRate(priceFeed) >= MINIMUM_USD,
       'Send me more honey b***!'
     );
     funders.push(msg.sender);

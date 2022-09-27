@@ -2,21 +2,19 @@ import { network } from 'hardhat'
 import { HardhatRuntimeEnvironment, NetworkConfig } from 'hardhat/types'
 import { networkConfig, type networkConfigItem } from '../helper-hardhat.config'
 
-
-export default async function(hre: HardhatRuntimeEnvironment) {
+export default async function (hre: HardhatRuntimeEnvironment) {
   // @ts-ignore
-  const { getNamedAccount, deployments } = hre
+  const { getNamedAccounts, deployments } = hre
   const { deploy, log } = deployments
-  const { deployer } = await getNamedAccount()
+  const { deployer } = await getNamedAccounts()
   const chainId = network.config.chainId
-  // const ethUsdPriceFeedAddress: string = networkConfig[network.name].ethUsdPriceFeed!
+  const ethUsdPriceFeedAddress = networkConfig[chainId!].ethUsdPriceFeed
 
-  // console.log(ethUsdPriceFeedAddress);
-  
+  console.log(ethUsdPriceFeedAddress)
 
   const fundMe = await deploy('FundMe', {
     from: deployer,
-    args: [],
-    log: true
+    args: [ethUsdPriceFeedAddress],
+    log: true,
   })
 }

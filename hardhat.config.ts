@@ -20,27 +20,27 @@ const config: HardhatUserConfig = {
   defaultNetwork: 'hardhat',
   networks: {
     hardhat: {
-      chainId: 31337,
+      chainId: 31337
       // gasPrice: 130000000000,
     },
     kovan: {
       url: KOVAN_RPC_URL,
       accounts: [PRIVATE_KEY],
-      chainId: 42,
-    },
+      chainId: 42
+    }
   },
   gasReporter: {
     enabled: true,
     currency: 'USD',
     outputFile: 'gas-report.txt',
-    noColors: true,
+    noColors: true
     // coinmarketcap: COINMARKETCAP_API_KEY,
   },
   namedAccounts: {
     deployer: {
-      default: 0,
-    },
-  },
+      default: 0
+    }
+  }
 }
 
 export default config

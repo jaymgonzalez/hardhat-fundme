@@ -5,7 +5,7 @@ import {
   networkConfig,
   type networkConfigItem,
 } from '../helper-hardhat.config'
-
+import verify from '../utils/verify'
 const deployFundMe = async function (hre: HardhatRuntimeEnvironment) {
   // @ts-ignore
   const { getNamedAccounts, deployments } = hre
@@ -26,6 +26,12 @@ const deployFundMe = async function (hre: HardhatRuntimeEnvironment) {
     args: [ethUsdPriceFeedAddress],
     log: true,
   })
+
+  if (
+    !developmentChains.includes(network.name) &&
+    process.env.ETHERSCAN_API_KEY
+  ) {
+  }
   log('-------------------------------------------------')
 }
 

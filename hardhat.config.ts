@@ -39,7 +39,20 @@ const config: HardhatUserConfig = {
     // coinmarketcap: COINMARKETCAP_API_KEY,
   },
   etherscan: {
-    apiKey: ETHERSCAN_API_KEY,
+    apiKey: {
+      goerli: ETHERSCAN_API_KEY,
+    },
+    // In case the module can't find the rinkeby etherscan automatically
+    customChains: [
+      {
+        network: 'goerli',
+        chainId: 5,
+        urls: {
+          apiURL: 'https://api-goerli.etherscan.io/api',
+          browserURL: 'https://goerli.etherscan.io',
+        },
+      },
+    ],
   },
   namedAccounts: {
     deployer: {

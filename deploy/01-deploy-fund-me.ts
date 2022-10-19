@@ -1,29 +1,36 @@
-import { network } from 'hardhat'
-import { HardhatRuntimeEnvironment, NetworkConfig } from 'hardhat/types'
+import { HardhatRuntimeEnvironment } from 'hardhat/types'
+import { DeployFunction } from 'hardhat-deploy/types'
 import { developmentChains, networkConfig } from '../helper-hardhat.config'
 import verify from '../utils/verify'
 
-const deployFundMe = async function (hre: HardhatRuntimeEnvironment) {
+const deployFundMe: DeployFunction = async function (
+  hre: HardhatRuntimeEnvironment
+) {
   // @ts-ignore
-  const { getNamedAccounts, deployments } = hre
+  const { getNamedAccounts, deployments, network } = hre
   const { deploy, log, get } = deployments
   const { deployer } = await getNamedAccounts()
-  const chainId = network.config.chainId
+  const chainId: number = network.config.chainId!
 
-  let ethUsdPriceFeedAddress
-  if (developmentChains.includes(network.name)) {
-    const ethUsdAggregator = get('MockV3Aggregator')
-    ethUsdPriceFeedAddress = (await ethUsdAggregator).address
+  let ethUsdPriceFeedAddress: string
+  if (chainId == 31337) {
+    const ethUsdAggregator = await get('MockV3Aggregator')
+    ethUsdPriceFeedAddress = ethUsdAggregator.address
   } else {
-    ethUsdPriceFeedAddress = networkConfig[chainId!].ethUsdPriceFeed
+    ethUsdPriceFeedAddress = networkConfig[network.name].ethUsdPriceFeed!
   }
+
+  log('----------------------------------------------------')
+  log('Deploying FundMe and waiting for confirmations...')
 
   const fundMe = await deploy('FundMe', {
     from: deployer,
     args: [ethUsdPriceFeedAddress],
     log: true,
-    waitConfirmations: networkConfig[chainId!].blockConfirmations! || 5,
+    waitConfirmations: networkConfig[network.name].blockConfirmations || 5,
   })
+
+  log(`FundMe deployed at ${fundMe.address}`)
 
   if (
     !developmentChains.includes(network.name) &&

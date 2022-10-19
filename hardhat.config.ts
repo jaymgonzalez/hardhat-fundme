@@ -1,5 +1,5 @@
 import '@typechain/hardhat'
-// import '@nomiclabs/hardhat-waffle'
+import '@nomiclabs/hardhat-waffle'
 import '@nomiclabs/hardhat-etherscan'
 import '@nomiclabs/hardhat-ethers'
 import 'hardhat-gas-reporter'
@@ -42,7 +42,7 @@ const config: HardhatUserConfig = {
     apiKey: {
       goerli: ETHERSCAN_API_KEY,
     },
-    // In case the module can't find the rinkeby etherscan automatically
+    // In case the module can't find the goerli etherscan automatically
     customChains: [
       {
         network: 'goerli',

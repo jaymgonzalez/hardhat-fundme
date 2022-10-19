@@ -22,13 +22,14 @@ const deployFundMe = async function (hre: HardhatRuntimeEnvironment) {
     from: deployer,
     args: [ethUsdPriceFeedAddress],
     log: true,
-    waitConfirmations: networkConfig[network.name].blockConfirmations || 0,
+    waitConfirmations: networkConfig[chainId!].blockConfirmations! || 5,
   })
 
   if (
     !developmentChains.includes(network.name) &&
     process.env.ETHERSCAN_API_KEY
   ) {
+    await verify(fundMe.address, [ethUsdPriceFeedAddress])
   }
   log('-------------------------------------------------')
 }

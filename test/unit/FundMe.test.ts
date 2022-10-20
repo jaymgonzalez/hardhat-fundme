@@ -21,7 +21,7 @@ describe('FundMe', function () {
   })
 
   describe('constructor', function () {
-    it('sets the aggregator addresses correctly', async () => {
+    it('Sets the aggregator addresses correctly', async () => {
       const response = await fundMe.priceFeed()
       assert.equal(response, mockV3Aggregator.address)
     })
@@ -31,7 +31,7 @@ describe('FundMe', function () {
     it("Fails if you don't send enough ETH", async () => {
       await expect(fundMe.fund()).to.be.revertedWith('Send me more honey b***!')
     })
-    it('updates the amount funded data structure', async () => {
+    it('Updates the amount funded data structure', async () => {
       await fundMe.fund({ value: ethers.utils.parseEther('1') })
       const response = await fundMe.addressToAmmountFunded(deployer.address)
       assert.equal(response.toString(), ethers.utils.parseEther('1').toString())
@@ -41,6 +41,37 @@ describe('FundMe', function () {
       await fundMe.fund({ value: ethers.utils.parseEther('1') })
       const funder = await fundMe.funders(0)
       assert.equal(funder, deployer.address)
+    })
+  })
+
+  describe('withdraw', function () {
+    beforeEach(async () => {
+      await fundMe.fund({ value: ethers.utils.parseEther('1') })
+    })
+    it('Withdraw ETH from a single funder', async () => {
+      const startingFundMeBalance = await fundMe.provider.getBalance(
+        fundMe.address
+      )
+      const startingDeployerBalance = await fundMe.provider.getBalance(
+        deployer.address
+      )
+      const transactionResponse = await fundMe.withdraw()
+      const transactionReceipt = await transactionResponse.wait(1)
+      const { gasUsed, effectiveGasPrice } = transactionReceipt
+      const gasCost = gasUsed.mul(effectiveGasPrice)
+
+      const endingFundMeBalance = await fundMe.provider.getBalance(
+        fundMe.address
+      )
+      const endingDeployerBalance = await fundMe.provider.getBalance(
+        deployer.address
+      )
+
+      assert.equal(endingFundMeBalance.toString(), '0')
+      assert.equal(
+        endingDeployerBalance.add(gasCost).toString(),
+        startingDeployerBalance.add(startingFundMeBalance).toString()
+      )
     })
   })
 })

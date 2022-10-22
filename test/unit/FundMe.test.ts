@@ -29,7 +29,7 @@ describe('FundMe', function () {
 
   describe('fund', function () {
     it("Fails if you don't send enough ETH", async () => {
-      await expect(fundMe.fund()).to.be.revertedWith('Send me more honey b***!')
+      await expect(fundMe.fund()).to.be.revertedWith('FundMe__NotEnoughFunds')
     })
     it('Updates the amount funded data structure', async () => {
       await fundMe.fund({ value: ethers.utils.parseEther('1') })

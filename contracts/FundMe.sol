@@ -5,6 +5,9 @@ pragma solidity ^0.8.0;
 import './PriceConverter.sol';
 
 error FundMe__NotOwner();
+error FundMe__NotEnoughFunds();
+error FundMe__FailedSend();
+error FundMe__FailedCall();
 
 /// @author Jay M Gonzalez
 /// @title A crowfunding contract
@@ -43,10 +46,9 @@ contract FundMe {
   }
 
   function fund() public payable {
-    require(
-      msg.value.getConversionRate(s_priceFeed) >= MINIMUM_USD,
-      'Send me more honey b***!'
-    );
+    if (msg.value.getConversionRate(s_priceFeed) <= MINIMUM_USD) {
+      revert FundMe__NotEnoughFunds();
+    }
     s_funders.push(msg.sender);
     s_addressToAmmountFunded[msg.sender] += msg.value;
   }
@@ -62,12 +64,16 @@ contract FundMe {
     payable(msg.sender).transfer(address(this).balance);
 
     bool sendSuccess = payable(msg.sender).send(address(this).balance);
-    require(sendSuccess, 'Send failed! :( ');
+    if (!sendSuccess) {
+      revert FundMe__FailedSend();
+    }
 
     (bool callSuccess, ) = payable(msg.sender).call{
       value: address(this).balance
     }('');
-    require(callSuccess, 'Send failed! :( ');
+    if (!callSuccess) {
+      revert FundMe__FailedCall();
+    }
   }
 
   function chaperWithdraw() public onlyOwner {
@@ -85,7 +91,9 @@ contract FundMe {
     s_funders = new address[](0);
 
     (bool sendSuccess, ) = i_owner.call{value: address(this).balance}('');
-    require(sendSuccess, 'Send failed! :( ');
+    if (!sendSuccess) {
+      revert FundMe__FailedSend();
+    }
   }
 
   function getOwner() public view returns (address) {

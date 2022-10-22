@@ -22,7 +22,7 @@ describe('FundMe', function () {
 
   describe('constructor', function () {
     it('Sets the aggregator addresses correctly', async () => {
-      const response = await fundMe.s_priceFeed()
+      const response = await fundMe.getPriceFeed()
       assert.equal(response, mockV3Aggregator.address)
     })
   })
@@ -33,12 +33,12 @@ describe('FundMe', function () {
     })
     it('Updates the amount funded data structure', async () => {
       await fundMe.fund({ value: ethers.utils.parseEther('1') })
-      const response = await fundMe.s_addressToAmmountFunded(deployer.address)
+      const response = await fundMe.getAddressToAmountFunded(deployer.address)
       assert.equal(response.toString(), ethers.utils.parseEther('1').toString())
     })
     it('It adds the sender address to funders array', async () => {
       await fundMe.fund({ value: ethers.utils.parseEther('1') })
-      const funder = await fundMe.s_funders(0)
+      const funder = await fundMe.getFunder(0)
       assert.equal(funder, deployer.address)
     })
   })
@@ -152,26 +152,26 @@ describe('FundMe', function () {
         startingDeployerBalance.add(startingFundMeBalance).toString()
       )
 
-      await expect(fundMe.s_funders(0)).to.be.reverted
+      await expect(fundMe.getFunder(0)).to.be.reverted
 
       assert.equal(
-        (await fundMe.s_addressToAmmountFunded(accounts[1].address)).toString(),
+        (await fundMe.getAddressToAmountFunded(accounts[1].address)).toString(),
         '0'
       )
       assert.equal(
-        (await fundMe.s_addressToAmmountFunded(accounts[2].address)).toString(),
+        (await fundMe.getAddressToAmountFunded(accounts[2].address)).toString(),
         '0'
       )
       assert.equal(
-        (await fundMe.s_addressToAmmountFunded(accounts[3].address)).toString(),
+        (await fundMe.getAddressToAmountFunded(accounts[3].address)).toString(),
         '0'
       )
       assert.equal(
-        (await fundMe.s_addressToAmmountFunded(accounts[4].address)).toString(),
+        (await fundMe.getAddressToAmountFunded(accounts[4].address)).toString(),
         '0'
       )
       assert.equal(
-        (await fundMe.s_addressToAmmountFunded(accounts[5].address)).toString(),
+        (await fundMe.getAddressToAmountFunded(accounts[5].address)).toString(),
         '0'
       )
     })
@@ -219,26 +219,26 @@ describe('FundMe', function () {
         startingDeployerBalance.add(startingFundMeBalance).toString()
       )
 
-      await expect(fundMe.s_funders(0)).to.be.reverted
+      await expect(fundMe.getFunder(0)).to.be.reverted
 
       assert.equal(
-        (await fundMe.s_addressToAmmountFunded(accounts[1].address)).toString(),
+        (await fundMe.getAddressToAmountFunded(accounts[1].address)).toString(),
         '0'
       )
       assert.equal(
-        (await fundMe.s_addressToAmmountFunded(accounts[2].address)).toString(),
+        (await fundMe.getAddressToAmountFunded(accounts[2].address)).toString(),
         '0'
       )
       assert.equal(
-        (await fundMe.s_addressToAmmountFunded(accounts[3].address)).toString(),
+        (await fundMe.getAddressToAmountFunded(accounts[3].address)).toString(),
         '0'
       )
       assert.equal(
-        (await fundMe.s_addressToAmmountFunded(accounts[4].address)).toString(),
+        (await fundMe.getAddressToAmountFunded(accounts[4].address)).toString(),
         '0'
       )
       assert.equal(
-        (await fundMe.s_addressToAmmountFunded(accounts[5].address)).toString(),
+        (await fundMe.getAddressToAmountFunded(accounts[5].address)).toString(),
         '0'
       )
     })
